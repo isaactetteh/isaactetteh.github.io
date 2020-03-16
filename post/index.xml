@@ -12,21 +12,21 @@
     
     
     <item>
-      <title>Basic Structured Operation in Pyspark.</title>
-      <link>/2020/03/08/basic-structured-operation-in-pyspark./</link>
+      <title>Basic Structured Operation in Pyspark</title>
+      <link>/2020/03/08/basic-structured-operation-in-pyspark/</link>
       <pubDate>Sun, 08 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/03/08/basic-structured-operation-in-pyspark./</guid>
+      <guid>/2020/03/08/basic-structured-operation-in-pyspark/</guid>
       <description>This is summary of chapter 5 of the Spark-The-Definitive-Guide book. This is a must read book if you really want to know much about spark. I found myself going back to back so I decided to create a simple summary of each chapter of the key point. I hope you find it useful too.
 Imports from pyspark.sql import SparkSessionfrom pyspark.sql import Rowfrom pyspark.sql.types import StringType, StructField, StructType, LongTypefrom pyspark.</description>
     </item>
     
     <item>
-      <title>Use Python Enums to make your code readable.</title>
-      <link>/2020/03/03/use-python-enums-to-make-your-code-readable./</link>
+      <title>Use Python Enums to make your code readable</title>
+      <link>/2020/03/03/use-python-enums-to-make-your-code-readable/</link>
       <pubDate>Tue, 03 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/03/03/use-python-enums-to-make-your-code-readable./</guid>
+      <guid>/2020/03/03/use-python-enums-to-make-your-code-readable/</guid>
       <description>Enums in Python and its uses cases In this tutorial, I will show how to construct enum type in python and examples of its uses. I will focus more on the parts you are most likely to use in your everyday python programming and touch on the other parts just for completness sake.
 Enum is a short form for enumeration. It is used to give names to a set of constants.</description>
     </item>
