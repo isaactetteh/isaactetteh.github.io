@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.66.0" />
+
+
+<title>Basic Structured Operation in Pyspark. - Isaac Personal Blog</title>
+<meta property="og:title" content="Basic Structured Operation in Pyspark. - Isaac Personal Blog">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  
+  <h2><a href="/" class="nav-logo">Isaac Tetteh</a></h2>
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/isaactetteh">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/isaac34mi">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">8 min read</span>
+    
+
+    <h1 class="article-title">Basic Structured Operation in Pyspark.</h1>
+
+    
+    <span class="article-date">2020-03-08</span>
+    
+
+    <div class="article-content">
+      <p>This is summary of chapter 5 of the <em>Spark-The-Definitive-Guide book</em>. This is a must read book if you really want to know much about spark. I found myself going back to back so I decided to create a simple summary of each chapter of the key point. I hope you find it useful too.</p>
+<h4 id="imports">Imports</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> pyspark.sql <span style="color:#f92672">import</span> SparkSession
+<span style="color:#f92672">from</span> pyspark.sql <span style="color:#f92672">import</span> Row
+<span style="color:#f92672">from</span> pyspark.sql.types <span style="color:#f92672">import</span> StringType, StructField, StructType, LongType
+<span style="color:#f92672">from</span> pyspark.sql.functions <span style="color:#f92672">import</span> col, column, expr, lit, desc, asc
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">spark <span style="color:#f92672">=</span> SparkSession\
+    <span style="color:#f92672">.</span>builder\
+    <span style="color:#f92672">.</span>appName(<span style="color:#e6db74">&#34;reviewOfStructuredOperations&#34;</span>)\
+    <span style="color:#f92672">.</span>getOrCreate()
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">data_path <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;C:data</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">Spark-The-Definitive-Guide</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">data</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">flight-data</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">json</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">2015-summary.json&#34;</span>
+
+df <span style="color:#f92672">=</span> spark<span style="color:#f92672">.</span>read<span style="color:#f92672">.</span>format(<span style="color:#e6db74">&#34;json&#34;</span>)<span style="color:#f92672">.</span>load(data_path)
+df<span style="color:#f92672">.</span>createGlobalTempView(<span style="color:#e6db74">&#34;dfTable&#34;</span>)
+</code></pre></div><h3 id="how-to-create-a-schema">How to create a schema</h3>
+<ul>
+<li>Use StructType from pyspark.sql.types to create schema instance.</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">schema <span style="color:#f92672">=</span> StructType([
+        StructField(name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;string&#34;</span>,dataType<span style="color:#f92672">=</span>StringType(), 
+        nullable<span style="color:#f92672">=</span>True, <span style="color:#75715e"># or False,</span>
+        metadata<span style="color:#f92672">=</span>{})])
+<span style="color:#66d9ef">print</span>(schema)
+</code></pre></div><pre><code>StructType(List(StructField(string,StringType,true)))
+</code></pre>
+<ul>
+<li>Add schema to a df</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">row <span style="color:#f92672">=</span> Row(<span style="color:#e6db74">&#34;Hello&#34;</span>)
+dfWithSchema <span style="color:#f92672">=</span> spark<span style="color:#f92672">.</span>createDataFrame([row], schema)
+dfWithSchema<span style="color:#f92672">.</span>printSchema()
+
+</code></pre></div><pre><code>root
+ |-- string: string (nullable = true)
+</code></pre>
+<h3 id="how-to-select-a-column">How to select a column</h3>
+<ul>
+<li>Use select which is an attribute of a dataframe.<br>
+example using select</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#Transformations</span>
+<span style="color:#75715e"># - Select, selectExpr</span>
+df<span style="color:#f92672">.</span>select(<span style="color:#e6db74">&#34;DEST_COUNTRY_NAME&#34;</span>)<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">2</span>)
+</code></pre></div><pre><code>+-----------------+
+|DEST_COUNTRY_NAME|
++-----------------+
+|    United States|
+|    United States|
++-----------------+
+only showing top 2 rows
+</code></pre>
+<p>Select muliple columns</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df<span style="color:#f92672">.</span>select(<span style="color:#e6db74">&#34;DEST_COUNTRY_NAME&#34;</span>, <span style="color:#e6db74">&#34;ORIGIN_COUNTRY_NAME&#34;</span>)<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">2</span>)
+</code></pre></div><pre><code>+-----------------+-------------------+
+|DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|
++-----------------+-------------------+
+|    United States|            Romania|
+|    United States|            Croatia|
++-----------------+-------------------+
+only showing top 2 rows
+</code></pre>
+<h3 id="how-to-select-a-column-with-an-expression">How to select a column with an expression</h3>
+<ul>
+<li>Use selectExpr which is an attribute of a dataframe</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df<span style="color:#f92672">.</span>selectExpr(<span style="color:#e6db74">&#34;DEST_COUNTRY_NAME AS newColumnName&#34;</span>,<span style="color:#e6db74">&#34;DEST_COUNTRY_NAME&#34;</span>)<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">2</span>)
+
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#34;&#34;&#34;#is the sames as
+</span><span style="color:#e6db74">df.select(expr(&#34;DEST_COUNTRY_NAME as dest&#34;))&#34;&#34;&#34;</span>)
+
+</code></pre></div><pre><code>+-------------+-----------------+
+|newColumnName|DEST_COUNTRY_NAME|
++-------------+-----------------+
+|United States|    United States|
+|United States|    United States|
++-------------+-----------------+
+only showing top 2 rows
+
+#is the sames as
+df.select(expr(&quot;DEST_COUNTRY_NAME as dest&quot;))
+</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#34;#another example&#34;</span>)
+df<span style="color:#f92672">.</span>selectExpr(<span style="color:#e6db74">&#34;avg(count)&#34;</span>, <span style="color:#e6db74">&#34;count(DISTINCT(DEST_COUNTRY_NAME))&#34;</span>)<span style="color:#f92672">.</span>show()
+
+</code></pre></div><pre><code>#another example
++-----------+---------------------------------+
+| avg(count)|count(DISTINCT DEST_COUNTRY_NAME)|
++-----------+---------------------------------+
+|1770.765625|                              132|
++-----------+---------------------------------+
+</code></pre>
+<p>selectExpr with excaping characters</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#escapping chars</span>
+dfWithLongColName <span style="color:#f92672">=</span> df<span style="color:#f92672">.</span>withColumn(<span style="color:#e6db74">&#34;This is a long Column-Name&#34;</span>, expr(<span style="color:#e6db74">&#34;ORIGIN_COUNTRY_NAME&#34;</span>))
+dfWithLongColName<span style="color:#f92672">.</span>selectExpr(<span style="color:#e6db74">&#34;`This is a long Column-Name`&#34;</span>,
+<span style="color:#e6db74">&#34;`This is a long Column-Name` AS `New Col`&#34;</span>)<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">2</span>)
+</code></pre></div><pre><code>+--------------------------+-------+
+|This is a long Column-Name|New Col|
++--------------------------+-------+
+|                   Romania|Romania|
+|                   Croatia|Croatia|
++--------------------------+-------+
+only showing top 2 rows
+</code></pre>
+<h3 id="how-to-add-a-literal-to-a-dataframe">How to add a literal to a dataframe</h3>
+<ul>
+<li>Literals are ways of passing values to spark that are not dataframes columns. This could be a constants or values created programmatically.</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df<span style="color:#f92672">.</span>select(expr(<span style="color:#e6db74">&#34;*&#34;</span>),lit(<span style="color:#ae81ff">1</span>)<span style="color:#f92672">.</span>alias(<span style="color:#e6db74">&#34;One&#34;</span>))<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">4</span>)
+
+</code></pre></div><pre><code>+-----------------+-------------------+-----+---+
+|DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|count|One|
++-----------------+-------------------+-----+---+
+|    United States|            Romania|   15|  1|
+|    United States|            Croatia|    1|  1|
+|    United States|            Ireland|  344|  1|
+|            Egypt|      United States|   15|  1|
++-----------------+-------------------+-----+---+
+only showing top 4 rows
+</code></pre>
+<h3 id="how-to-add-new-columns-and-rename-columns">How to add new columns and rename columns</h3>
+<ul>
+<li>use withColumn attribute for adding new columns</li>
+<li>use withColumnRenamed attribute for renaming columns</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># Keep in mind that adding a new col is not changing the old df. df are immutable.</span>
+
+<span style="color:#75715e">#expr is a function is pyspark.sql.functions</span>
+df<span style="color:#f92672">.</span>withColumn(<span style="color:#e6db74">&#34;withinCountry&#34;</span>,
+    expr(<span style="color:#e6db74">&#34;ORIGIN_COUNTRY_NAME == DEST_COUNTRY_NAME&#34;</span>))<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">2</span>)
+</code></pre></div><pre><code>+-----------------+-------------------+-----+-------------+
+|DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|count|withinCountry|
++-----------------+-------------------+-----+-------------+
+|    United States|            Romania|   15|        false|
+|    United States|            Croatia|    1|        false|
++-----------------+-------------------+-----+-------------+
+only showing top 2 rows
+</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#check destination and origin are the same</span>
+df<span style="color:#f92672">.</span>selectExpr(<span style="color:#e6db74">&#34;*&#34;</span>,<span style="color:#75715e">#include all original columns</span>
+    <span style="color:#e6db74">&#34;(DEST_COUNTRY_NAME = ORIGIN_COUNTRY_NAME) AS withCountry&#34;</span>)<span style="color:#f92672">.</span>filter(<span style="color:#e6db74">&#34;withCountry = true&#34;</span>)<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">2</span>)
+</code></pre></div><pre><code>+-----------------+-------------------+------+-----------+
+|DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME| count|withCountry|
++-----------------+-------------------+------+-----------+
+|    United States|      United States|370002|       true|
++-----------------+-------------------+------+-----------+
+</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#escapping chars</span>
+dfWithLongColName <span style="color:#f92672">=</span> df<span style="color:#f92672">.</span>withColumn(<span style="color:#e6db74">&#34;This is a long Column-Name&#34;</span>, expr(<span style="color:#e6db74">&#34;ORIGIN_COUNTRY_NAME&#34;</span>))
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df<span style="color:#f92672">.</span>selectExpr(<span style="color:#e6db74">&#34;avg(count)&#34;</span>, <span style="color:#e6db74">&#34;count(DISTINCT(DEST_COUNTRY_NAME))&#34;</span>)<span style="color:#f92672">.</span>show()
+</code></pre></div><pre><code>+-----------+---------------------------------+
+| avg(count)|count(DISTINCT DEST_COUNTRY_NAME)|
++-----------+---------------------------------+
+|1770.765625|                              132|
++-----------+---------------------------------+
+</code></pre>
+<p>Adding new columns and renaming columns</p>
+<ul>
+<li>withColumn for adding new columns</li>
+<li>withColumnRenamed for renaming columns</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#adding columns to the table</span>
+df<span style="color:#f92672">.</span>withColumn(<span style="color:#e6db74">&#34;withinCountry&#34;</span>,
+    expr(<span style="color:#e6db74">&#34;ORIGIN_COUNTRY_NAME == DEST_COUNTRY_NAME&#34;</span>))<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">2</span>)
+</code></pre></div><pre><code>+-----------------+-------------------+-----+-------------+
+|DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|count|withinCountry|
++-----------------+-------------------+-----+-------------+
+|    United States|            Romania|   15|        false|
+|    United States|            Croatia|    1|        false|
++-----------------+-------------------+-----+-------------+
+only showing top 2 rows
+</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#escapping chars</span>
+dfWithLongColName <span style="color:#f92672">=</span> df<span style="color:#f92672">.</span>withColumn(<span style="color:#e6db74">&#34;This is a long Column-Name&#34;</span>, expr(<span style="color:#e6db74">&#34;ORIGIN_COUNTRY_NAME&#34;</span>))
+
+dfWithLongColName<span style="color:#f92672">.</span>selectExpr(<span style="color:#e6db74">&#34;`This is a long Column-Name`&#34;</span>,
+    <span style="color:#e6db74">&#34;`This is a long Column-Name` AS `New Col`&#34;</span>)<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">2</span>)
+</code></pre></div><pre><code>+--------------------------+-------+
+|This is a long Column-Name|New Col|
++--------------------------+-------+
+|                   Romania|Romania|
+|                   Croatia|Croatia|
++--------------------------+-------+
+only showing top 2 rows
+</code></pre>
+<p>Example of withColumnRenamed</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#rename col</span>
+df<span style="color:#f92672">.</span>withColumnRenamed(<span style="color:#e6db74">&#34;DEST_COUNTRY_NAME&#34;</span>, <span style="color:#e6db74">&#34;dest&#34;</span>)<span style="color:#f92672">.</span>columns
+</code></pre></div><pre><code>['dest', 'ORIGIN_COUNTRY_NAME', 'count']
+</code></pre>
+<h3 id="how-to-remove-columns-from-a-dataframe">How to remove columns from a dataframe</h3>
+<ul>
+<li>use drop attribute to drop a single or mulitple Columns(comma seperated).
+Returns new dataframe without the droped column(s).</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># Remove Columns</span>
+df<span style="color:#f92672">.</span>drop(<span style="color:#e6db74">&#34;ORIGIN_COUNTRY_NAME&#34;</span>)<span style="color:#f92672">.</span>columns
+
+</code></pre></div><pre><code>['DEST_COUNTRY_NAME', 'count']
+</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">
+<span style="color:#75715e">#droping multi col</span>
+dfWithLongColName<span style="color:#f92672">.</span>drop(<span style="color:#e6db74">&#34;ORIGIN_COUNTRY_NAME&#34;</span>, <span style="color:#e6db74">&#34;DES_COUNTRY_NAME&#34;</span>)
+</code></pre></div><pre><code>DataFrame[DEST_COUNTRY_NAME: string, count: bigint, This is a long Column-Name: string]
+</code></pre>
+<p>How to change a Column&rsquo;s Type(Cast)</p>
+<ul>
+<li>Use the cast attribute of the a Column. In this case you use the col function to select the Column and cast to new type.</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">## Changing a Columnn&#39;s Type(cast)</span>
+df<span style="color:#f92672">.</span>withColumn(<span style="color:#e6db74">&#34;count2&#34;</span>, col(<span style="color:#e6db74">&#34;count&#34;</span>)<span style="color:#f92672">.</span>cast(<span style="color:#e6db74">&#34;long&#34;</span>))
+</code></pre></div><pre><code>DataFrame[DEST_COUNTRY_NAME: string, ORIGIN_COUNTRY_NAME: string, count: bigint, count2: bigint]
+</code></pre>
+<h2 id="filtering-rows">Filtering Rows</h2>
+<ul>
+<li>Use filter attribute or</li>
+<li>Use the where attribute<br>
+Both filter and where performs the same task.</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df<span style="color:#f92672">.</span>where(<span style="color:#e6db74">&#34;count &lt; 2&#34;</span>)<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">2</span>)
+</code></pre></div><pre><code>+-----------------+-------------------+-----+
+|DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|count|
++-----------------+-------------------+-----+
+|    United States|            Croatia|    1|
+|    United States|          Singapore|    1|
++-----------------+-------------------+-----+
+only showing top 2 rows
+</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df<span style="color:#f92672">.</span>filter(col(<span style="color:#e6db74">&#34;count&#34;</span>) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span>)<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">2</span>)
+</code></pre></div><pre><code>+-----------------+-------------------+-----+
+|DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|count|
++-----------------+-------------------+-----+
+|    United States|            Croatia|    1|
+|    United States|          Singapore|    1|
++-----------------+-------------------+-----+
+only showing top 2 rows
+</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df<span style="color:#f92672">.</span>where(col(<span style="color:#e6db74">&#34;count&#34;</span>) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span>)<span style="color:#f92672">.</span>where(col(<span style="color:#e6db74">&#34;ORIGIN_COUNTRY_NAME&#34;</span>) <span style="color:#f92672">!=</span> <span style="color:#e6db74">&#34;Croatia&#34;</span>)<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">2</span>)
+</code></pre></div><pre><code>+-----------------+-------------------+-----+
+|DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|count|
++-----------------+-------------------+-----+
+|    United States|          Singapore|    1|
+|          Moldova|      United States|    1|
++-----------------+-------------------+-----+
+only showing top 2 rows
+</code></pre>
+<h3 id="getting-unique-rows">Getting Unique Rows</h3>
+<ul>
+<li>call distinct on dataset or resultset</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">## Getting Unique Rows</span>
+schema <span style="color:#f92672">=</span> df<span style="color:#f92672">.</span>schema
+newRows <span style="color:#f92672">=</span> [
+    Row(<span style="color:#e6db74">&#34;New Country&#34;</span>, <span style="color:#e6db74">&#34;Other Country&#34;</span>, <span style="color:#ae81ff">5</span>),
+    Row(<span style="color:#e6db74">&#34;New Country&#34;</span>, <span style="color:#e6db74">&#34;Other Country&#34;</span>, <span style="color:#ae81ff">5</span>)]
+parallizedRows <span style="color:#f92672">=</span> spark<span style="color:#f92672">.</span>sparkContext<span style="color:#f92672">.</span>parallelize(newRows)
+newDF <span style="color:#f92672">=</span> spark<span style="color:#f92672">.</span>createDataFrame(parallizedRows, schema)
+df <span style="color:#f92672">=</span> df<span style="color:#f92672">.</span>union(newDF)
+
+<span style="color:#66d9ef">print</span>(f<span style="color:#e6db74">&#34;Total number of rows = {df.count()}&#34;</span>)
+distinct_rows <span style="color:#f92672">=</span> df<span style="color:#f92672">.</span>select(<span style="color:#e6db74">&#34;ORIGIN_COUNTRY_NAME&#34;</span>, <span style="color:#e6db74">&#34;DEST_COUNTRY_NAME&#34;</span>)<span style="color:#f92672">.</span>distinct()<span style="color:#f92672">.</span>count()
+<span style="color:#66d9ef">print</span>(f<span style="color:#e6db74">&#34;Total number of distinct rows = {distinct_rows}&#34;</span>)
+</code></pre></div><pre><code>Total number of rows = 258
+Total number of distinct rows = 257
+</code></pre>
+<h3 id="random-samples">Random Samples</h3>
+<p>sample using the attribure sample</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#random Samples</span>
+seed <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>
+withReplacement <span style="color:#f92672">=</span> False
+fraction <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.5</span>
+df<span style="color:#f92672">.</span>sample(withReplacement<span style="color:#f92672">=</span>withReplacement, fraction<span style="color:#f92672">=</span>fraction, seed<span style="color:#f92672">=</span>seed)<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">10</span>)
+</code></pre></div><pre><code>+--------------------+-------------------+-----+
+|   DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|count|
++--------------------+-------------------+-----+
+|       United States|            Romania|   15|
+|               Egypt|      United States|   15|
+|       United States|              India|   62|
+|          Costa Rica|      United States|  588|
+|             Senegal|      United States|   40|
+|              Guyana|      United States|   64|
+|             Bolivia|      United States|   30|
+|       United States|           Paraguay|    6|
+|             Algeria|      United States|    4|
+|Turks and Caicos ...|      United States|  230|
++--------------------+-------------------+-----+
+only showing top 10 rows
+</code></pre>
+<h3 id="random-splits">Random splits</h3>
+<p>splits randomly into two different datasets</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># Ramdom Splits</span>
+dataFrames <span style="color:#f92672">=</span> df<span style="color:#f92672">.</span>randomSplit([<span style="color:#ae81ff">0.25</span>, <span style="color:#ae81ff">0.75</span>], seed)
+dataFrames[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>count() <span style="color:#f92672">&gt;</span> dataFrames[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>count() <span style="color:#75715e">#false</span>
+</code></pre></div><pre><code>False
+</code></pre>
+<h3 id="concatinating-and-appending-rowsunion">Concatinating and Appending Rows(union)</h3>
+<p>Appending to a dataframe is not possible since its immutable. to append to a dataframe, you have to union the original DF along with the new dataframe.Both dataframes must have the same schema.</p>
+<p>union are performed based on location, not in the schema.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#contactination</span>
+schema <span style="color:#f92672">=</span> df<span style="color:#f92672">.</span>schema
+newRows <span style="color:#f92672">=</span> [
+    Row(<span style="color:#e6db74">&#34;New Country&#34;</span>, <span style="color:#e6db74">&#34;Other Country&#34;</span>, <span style="color:#ae81ff">5</span>),
+    Row(<span style="color:#e6db74">&#34;New Country 2&#34;</span>, <span style="color:#e6db74">&#34;Other Country 3&#34;</span>, <span style="color:#ae81ff">1</span>)
+]
+parallizedRows <span style="color:#f92672">=</span> spark<span style="color:#f92672">.</span>sparkContext<span style="color:#f92672">.</span>parallelize(newRows)
+newDF <span style="color:#f92672">=</span> spark<span style="color:#f92672">.</span>createDataFrame(parallizedRows, schema)
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df<span style="color:#f92672">.</span>union(newDF)\
+    <span style="color:#f92672">.</span>where(<span style="color:#e6db74">&#34;count = 1&#34;</span>)\
+    <span style="color:#f92672">.</span>where(col(<span style="color:#e6db74">&#34;ORIGIN_COUNTRY_NAME&#34;</span>) <span style="color:#f92672">!=</span> <span style="color:#e6db74">&#34;United States&#34;</span>)\
+    <span style="color:#f92672">.</span>show()
+</code></pre></div><pre><code>+-----------------+-------------------+-----+
+|DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|count|
++-----------------+-------------------+-----+
+|    United States|            Croatia|    1|
+|    United States|          Singapore|    1|
+|    United States|          Gibraltar|    1|
+|    United States|             Cyprus|    1|
+|    United States|            Estonia|    1|
+|    United States|          Lithuania|    1|
+|    United States|           Bulgaria|    1|
+|    United States|            Georgia|    1|
+|    United States|            Bahrain|    1|
+|    United States|   Papua New Guinea|    1|
+|    United States|         Montenegro|    1|
+|    United States|            Namibia|    1|
+|    New Country 2|    Other Country 3|    1|
++-----------------+-------------------+-----+
+</code></pre>
+<h3 id="sort-and-order">Sort and Order</h3>
+<p>An advance tip is to use <strong>asc_nulls</strong>, <strong>desc_nulls_first</strong>, <strong>asc_nulls_last</strong>, <strong>desc_nulls_last</strong>.to specify where null should be in the sort and order.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df<span style="color:#f92672">.</span>sort(<span style="color:#e6db74">&#34;count&#34;</span>)<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">5</span>)
+</code></pre></div><pre><code>+--------------------+-------------------+-----+
+|   DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|count|
++--------------------+-------------------+-----+
+|               Malta|      United States|    1|
+|Saint Vincent and...|      United States|    1|
+|       United States|            Croatia|    1|
+|       United States|          Gibraltar|    1|
+|       United States|          Singapore|    1|
++--------------------+-------------------+-----+
+only showing top 5 rows
+</code></pre>
+<p>Using OrderBy</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df<span style="color:#f92672">.</span>orderBy(<span style="color:#e6db74">&#34;count&#34;</span>, <span style="color:#e6db74">&#34;DEST_COUNTRY_NAME&#34;</span>)<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">5</span>)
+</code></pre></div><pre><code>+-----------------+-------------------+-----+
+|DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|count|
++-----------------+-------------------+-----+
+|     Burkina Faso|      United States|    1|
+|    Cote d'Ivoire|      United States|    1|
+|           Cyprus|      United States|    1|
+|         Djibouti|      United States|    1|
+|        Indonesia|      United States|    1|
++-----------------+-------------------+-----+
+only showing top 5 rows
+</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df<span style="color:#f92672">.</span>orderBy(col(<span style="color:#e6db74">&#34;count&#34;</span>), col(<span style="color:#e6db74">&#34;DEST_COUNTRY_NAME&#34;</span>))<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">5</span>)
+</code></pre></div><pre><code>+-----------------+-------------------+-----+
+|DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|count|
++-----------------+-------------------+-----+
+|     Burkina Faso|      United States|    1|
+|    Cote d'Ivoire|      United States|    1|
+|           Cyprus|      United States|    1|
+|         Djibouti|      United States|    1|
+|        Indonesia|      United States|    1|
++-----------------+-------------------+-----+
+only showing top 5 rows
+</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df<span style="color:#f92672">.</span>orderBy(col(<span style="color:#e6db74">&#34;count&#34;</span>)<span style="color:#f92672">.</span>desc(), col(<span style="color:#e6db74">&#34;DEST_COUNTRY_NAME&#34;</span>)<span style="color:#f92672">.</span>asc())<span style="color:#f92672">.</span>show(<span style="color:#ae81ff">2</span>)
+</code></pre></div><pre><code>+-----------------+-------------------+------+
+|DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME| count|
++-----------------+-------------------+------+
+|    United States|      United States|370002|
+|    United States|             Canada|  8483|
++-----------------+-------------------+------+
+only showing top 2 rows
+</code></pre>
+<p>For optimization purposes, it&rsquo;s sometimes advisable to sort within each partition before another set of transformations.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># for optimization sort within partition</span>
+spark<span style="color:#f92672">.</span>read<span style="color:#f92672">.</span>format(<span style="color:#e6db74">&#34;json&#34;</span>)<span style="color:#f92672">.</span>load(data_path<span style="color:#f92672">+</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">flight-data</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">json</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">*-summary.json&#34;</span>)<span style="color:#f92672">.</span>sortWithinPartitions(<span style="color:#e6db74">&#34;count&#34;</span>)
+</code></pre></div><pre><code>DataFrame[DEST_COUNTRY_NAME: string, ORIGIN_COUNTRY_NAME: string, count: bigint]
+</code></pre>
+<h3 id="limit">Limit</h3>
+<p>Limit is a transformation, therefore lazy. performs transformation on whole dataset and return the nth rows. Think of limit function as in SQL.</p>
+<p>take is an action and not lazy. first n</p>
+<p>show just the first n it see</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df<span style="color:#f92672">.</span>orderBy(expr(<span style="color:#e6db74">&#34;count desc&#34;</span>))<span style="color:#f92672">.</span>limit(<span style="color:#ae81ff">6</span>)<span style="color:#f92672">.</span>show()
+</code></pre></div><pre><code>+--------------------+-------------------+-----+
+|   DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|count|
++--------------------+-------------------+-----+
+|               Malta|      United States|    1|
+|Saint Vincent and...|      United States|    1|
+|       United States|            Croatia|    1|
+|       United States|          Gibraltar|    1|
+|       United States|          Singapore|    1|
+|             Moldova|      United States|    1|
++--------------------+-------------------+-----+
+</code></pre>
+<h3 id="repartion-and-coalesce">Repartion and coalesce</h3>
+<p>Repartition will incur a full shuffle of the data, regardless of whether one is neccessary. you should usually only repartition when the future number partitions are greater than your current number of partitions. Or when you are looking to partition by a set of column</p>
+<p><strong>Coalesce</strong> on the other hand, will not incur a full shuffle and will try to combine partitions. this operation will shuffle your data into five partitions based on the destination country name, and then coalsecethem (without a full shuffle)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">## repartition - creaes a full shuffle</span>
+df<span style="color:#f92672">.</span>repartition(<span style="color:#ae81ff">5</span>)
+df<span style="color:#f92672">.</span>repartition(col(<span style="color:#e6db74">&#34;DEST_COUNTRY_NAME&#34;</span>))
+df<span style="color:#f92672">.</span>repartition(<span style="color:#ae81ff">5</span>, col(<span style="color:#e6db74">&#34;DEST_COUNTRY_NAME&#34;</span>))
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#Coalesce - does not create a full shuffle, combines partition</span>
+df<span style="color:#f92672">.</span>repartition(<span style="color:#ae81ff">5</span>, col(<span style="color:#e6db74">&#34;DEST_COUNTRY_NAME&#34;</span>))<span style="color:#f92672">.</span>coalesce(<span style="color:#ae81ff">2</span>)
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">##Collect partitions to the driver as an iterator.</span>
+<span style="color:#75715e"># collectDF.toLocalIterator()</span>
+</code></pre></div><p>That&rsquo;s it for part 1, Thanks for reading and hopefully you learnt something.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/python.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

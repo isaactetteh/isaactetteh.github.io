@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>spark on Isaac Personal Blog</title>
+    <link>/tags/spark/</link>
+    <description>Recent content in spark on Isaac Personal Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 08 Mar 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/spark/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Basic Structured Operation in Pyspark.</title>
+      <link>/2020/03/08/basic-structured-operation-in-pyspark./</link>
+      <pubDate>Sun, 08 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/03/08/basic-structured-operation-in-pyspark./</guid>
+      <description>This is summary of chapter 5 of the Spark-The-Definitive-Guide book. This is a must read book if you really want to know much about spark. I found myself going back to back so I decided to create a simple summary of each chapter of the key point. I hope you find it useful too.
+Imports from pyspark.sql import SparkSessionfrom pyspark.sql import Rowfrom pyspark.sql.types import StringType, StructField, StructType, LongTypefrom pyspark.</description>
+    </item>
+    
+  </channel>
+</rss>

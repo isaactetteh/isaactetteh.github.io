@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Isaac Personal Blog</title>
+    <link>/</link>
+    <description>Recent content on Isaac Personal Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 05 May 2016 21:48:51 -0700</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Basic Structured Operation in Pyspark.</title>
+      <link>/2020/03/08/basic-structured-operation-in-pyspark./</link>
+      <pubDate>Sun, 08 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/03/08/basic-structured-operation-in-pyspark./</guid>
+      <description>This is summary of chapter 5 of the Spark-The-Definitive-Guide book. This is a must read book if you really want to know much about spark. I found myself going back to back so I decided to create a simple summary of each chapter of the key point. I hope you find it useful too.
+Imports from pyspark.sql import SparkSessionfrom pyspark.sql import Rowfrom pyspark.sql.types import StringType, StructField, StructType, LongTypefrom pyspark.</description>
+    </item>
+    
+    <item>
+      <title>Use Python Enums to make your code readable.</title>
+      <link>/2020/03/03/use-python-enums-to-make-your-code-readable./</link>
+      <pubDate>Tue, 03 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/03/03/use-python-enums-to-make-your-code-readable./</guid>
+      <description>Enums in Python and its uses cases In this tutorial, I will show how to construct enum type in python and examples of its uses. I will focus more on the parts you are most likely to use in your everyday python programming and touch on the other parts just for completness sake.
+Enum is a short form for enumeration. It is used to give names to a set of constants.</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>/about/</link>
+      <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
+      
+      <guid>/about/</guid>
+      <description>This is a &amp;ldquo;hello world&amp;rdquo; example website for the blogdown package. The theme was forked from @jrutheiser/hugo-lithium-theme and modified by Yihui Xie.</description>
+    </item>
+    
+  </channel>
+</rss>
